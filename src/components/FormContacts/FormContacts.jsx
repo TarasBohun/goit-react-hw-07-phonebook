@@ -1,20 +1,32 @@
-import PropTypes from 'prop-types';
 import { Formik, Field, ErrorMessage } from 'formik';
-import { nanoid } from 'nanoid';
 import { FormField, Form } from './FormContacts.styled';
 
-export const FormContacts = ({ onSave }) => {
+import { useDispatch } from 'react-redux';
+import { useContacts } from 'hooks/useContacts';
+import { addContact } from 'redux/getContacts';
+// import { selectIsLoading } from 'redux/selectors';
+
+export const FormContacts = () => {
+  const dispatch = useDispatch();
+  const contacts = useContacts();
+  // const isLoading = useSelector(selectIsLoading);
+
   return (
     <Formik
       initialValues={{
         name: '',
-        number: '',
+        phone: '',
       }}
       onSubmit={(values, actions) => {
-        onSave({
-          ...values,
-          id: nanoid(),
-        });
+        if (
+          contacts.find(
+            contact => contact.name.toLowerCase() === values.name.toLowerCase()
+          )
+        ) {
+          alert(`${values.name} is already in contacts`);
+          return;
+        }
+        dispatch(addContact(values));
         actions.resetForm();
       }}
     >
@@ -34,7 +46,7 @@ export const FormContacts = ({ onSave }) => {
         <FormField>
           <Field
             type="tel"
-            name="number"
+            name="phone"
             placeholder="Number"
             pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
             title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
@@ -47,8 +59,4 @@ export const FormContacts = ({ onSave }) => {
       </Form>
     </Formik>
   );
-};
-
-FormContacts.propType = {
-  onSave: PropTypes.func.isRequired,
 };

@@ -4,57 +4,27 @@ import { Filter } from './Filter';
 import { GlobalStyle } from './GlobalStyles';
 import { Container } from './Container';
 
-import { useSelector, useDispatch } from 'react-redux';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 
-import {
-  addContact,
-  deleteContact,
-  filterContacts,
-  getContactsValue,
-  getFilterValue,
-} from 'redux/contactSlice';
+import { fetchContacts } from 'redux/getContacts';
 
 export const App = () => {
   const dispatch = useDispatch();
-  const contactsValue = useSelector(getContactsValue);
-  const filterValue = useSelector(getFilterValue);
 
-  const addNewContact = newContact => {
-    if (
-      contactsValue.find(
-        contact => contact.name.toLowerCase() === newContact.name.toLowerCase()
-      )
-    ) {
-      alert(`${newContact.name} is already in contacts`);
-      return;
-    }
-
-    dispatch(addContact(newContact));
-  };
-
-  const onDeleteContact = contactId => {
-    dispatch(deleteContact(contactId));
-  };
-
-  const searchContacts = e => {
-    dispatch(filterContacts(e.currentTarget.value));
-  };
-
-  const getFilteredContacts = () => {
-    return contactsValue.filter(contact =>
-      contact.name.toLowerCase().includes(filterValue.toLowerCase())
-    );
-  };
+  useEffect(() => {
+    dispatch(fetchContacts());
+  }, [dispatch]);
 
   return (
     <Container>
       <GlobalStyle />
       <h1>Phonebook</h1>
-      <FormContacts onSave={addNewContact} />
+      <FormContacts />
 
       <h2>Contacts</h2>
-      <Filter value={filterValue} onChange={searchContacts} />
-      <Contacts contacts={getFilteredContacts()} onDelete={onDeleteContact} />
+      <Filter />
+      <Contacts />
     </Container>
   );
 };

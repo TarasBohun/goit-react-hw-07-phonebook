@@ -13,8 +13,8 @@ export const List = styled.ul`
 `;
 
 export const Item = styled.li`
-  /* margin-right: 15px; */
   color: #3e3c3c;
+  font-size: 12px;
 `;
 
 export const Container = styled.div`

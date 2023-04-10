@@ -1,32 +1,30 @@
-import PropTypes from 'prop-types';
 import { List, Item, Container } from './Contacts.styled';
 
-export const Contacts = ({ contacts, onDelete }) => {
+import { useContacts } from 'hooks/useContacts';
+import { deleteContact } from 'redux/getContacts';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectIsLoading } from 'redux/selectors';
+
+export const Contacts = () => {
+  const contacts = useContacts();
+  const dispatch = useDispatch();
+  const isLoading = useSelector(selectIsLoading);
+  // const error = useSelector(selectError);
+
   return (
     <List>
-      {contacts.map(({ id, name, number }) => {
+      {contacts.map(({ id, name, phone }) => {
         return (
           <Container key={id}>
             <Item>
-              {name}: {number}
+              {name}: {phone}
             </Item>
-            <button type="button" onClick={() => onDelete(id)}>
-              Delete
+            <button type="button" onClick={() => dispatch(deleteContact(id))}>
+              {isLoading ? 'Loading' : 'Delete'}
             </button>
           </Container>
         );
       })}
     </List>
   );
-};
-
-Contacts.protoType = {
-  contacts: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired,
-      number: PropTypes.string.isRequired,
-    })
-  ).isRequired,
-  onDelete: PropTypes.func.isRequired,
 };
